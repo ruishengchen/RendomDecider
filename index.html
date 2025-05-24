@@ -232,7 +232,7 @@
         </main>
         
         <footer class="bg-gray-800 text-white py-4 text-center text-sm">
-            <p>© 2025 生活科技徐老師抽籤輪盤遊戲</p>
+            <p>© 2023 生活科技徐老師抽籤輪盤遊戲 - 使用 Canva Code 製作</p>
         </footer>
     </div>
 
@@ -443,6 +443,7 @@
             
             // 旋轉輪盤
             function spinWheel() {
+                new Audio("wheel.mp3").play();
                 if (isSpinning || options.length === 0) return;
                 
                 // 如果有上次抽中的選項，先移除它（包括所有重複的）
@@ -565,11 +566,10 @@
                 });
                 
                 // 最多保留10條記錄
-                /*
                 if (drawHistory.length > 10) {
                     drawHistory.pop();
                 }
-                */
+                
                 updateHistoryList();
             }
             
@@ -599,6 +599,7 @@
             
             // 創建慶祝效果
             function createConfetti() {
+                new Audio('bell_ring.mp3').play();
                 confettiContainer.innerHTML = '';
                 const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
                 
