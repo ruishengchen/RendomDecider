@@ -1,0 +1,651 @@
+
+<!DOCTYPE html>
+<!-- saved from url=(0140)https://bc75x9wry243hqb4.canva-hosted-embed.com/codelet/AAEAEGJjNzV4OXdyeTI0M2hxYjQAAAAAAZcG9dNHA3zddzvtcjIrDk06Xd78-AYr372ECh2wHtZHyNTMi2E/ -->
+<html lang="zh-TW"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生活科技徐老師抽籤輪盤遊戲</title>
+    <script src="./saved_resource"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f0f9ff;
+        }
+        
+        .wheel-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+        }
+        
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            transition: transform 3s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            transform-origin: center center;
+        }
+        
+        .wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            z-index: 5;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .wheel-pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 30px solid #e11d48;
+            z-index: 10;
+        }
+        
+        .result-display {
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .option-item {
+            transition: all 0.3s ease;
+        }
+        
+        .option-item:hover {
+            background-color: #f1f5f9;
+        }
+        
+        .option-item.to-be-removed {
+            background-color: #fee2e2;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { background-color: #fee2e2; }
+            50% { background-color: #fecaca; }
+        }
+        
+        .spin-button {
+            transition: all 0.3s ease;
+        }
+        
+        .spin-button:hover {
+            transform: scale(1.05);
+        }
+        
+        .spin-button:active {
+            transform: scale(0.95);
+        }
+        
+        .confetti-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 20;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            border-radius: 50%;
+            animation: fall 3s ease-in-out forwards;
+        }
+        
+        @keyframes fall {
+            0% {
+                transform: translateY(-50px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(150px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .history-item {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-out {
+            animation: fadeOut 0.5s ease-in-out forwards;
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-left: 6px;
+        }
+        
+        .wheel-reset {
+            transition: transform 0.5s ease-in-out;
+        }
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.16 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width: 640px){.container{max-width:640px}}@media (min-width: 768px){.container{max-width:768px}}@media (min-width: 1024px){.container{max-width:1024px}}@media (min-width: 1280px){.container{max-width:1280px}}@media (min-width: 1536px){.container{max-width:1536px}}.fixed{position:fixed}.right-4{right:1rem}.top-4{top:1rem}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.ml-2{margin-left:0.5rem}.ml-auto{margin-left:auto}.mt-2{margin-top:0.5rem}.mt-6{margin-top:1.5rem}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-5{height:1.25rem}.max-h-40{max-height:10rem}.max-h-64{max-height:16rem}.min-h-screen{min-height:100vh}.w-full{width:100%}.w-5{width:1.25rem}.max-w-4xl{max-width:56rem}.flex-grow{flex-grow:1}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-8{gap:2rem}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.rounded{border-radius:0.25rem}.rounded-l-lg{border-top-left-radius:0.5rem;border-bottom-left-radius:0.5rem}.rounded-r-lg{border-top-right-radius:0.5rem;border-bottom-right-radius:0.5rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-amber-200{--tw-border-opacity:1;border-color:rgb(253 230 138 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.border-gray-100{--tw-border-opacity:1;border-color:rgb(243 244 246 / var(--tw-border-opacity, 1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.bg-gray-800{--tw-bg-opacity:1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-red-100{--tw-bg-opacity:1;background-color:rgb(254 226 226 / var(--tw-bg-opacity, 1))}.bg-yellow-50{--tw-bg-opacity:1;background-color:rgb(254 252 232 / var(--tw-bg-opacity, 1))}.bg-blue-500{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-blue-600{--tw-gradient-from:#2563eb var(--tw-gradient-from-position);--tw-gradient-to:rgb(37 99 235 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-rose-500{--tw-gradient-from:#f43f5e var(--tw-gradient-from-position);--tw-gradient-to:rgb(244 63 94 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-yellow-50{--tw-gradient-from:#fefce8 var(--tw-gradient-from-position);--tw-gradient-to:rgb(254 252 232 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-amber-50{--tw-gradient-to:#fffbeb var(--tw-gradient-to-position)}.to-indigo-700{--tw-gradient-to:#4338ca var(--tw-gradient-to-position)}.to-pink-600{--tw-gradient-to:#db2777 var(--tw-gradient-to-position)}.p-2{padding:0.5rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-3{padding:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-8{padding-left:2rem;padding-right:2rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.py-8{padding-top:2rem;padding-bottom:2rem}.text-center{text-align:center}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-2xl{font-size:1.5rem;line-height:2rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.text-blue-800{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-red-800{--tw-text-opacity:1;color:rgb(153 27 27 / var(--tw-text-opacity, 1))}.text-rose-600{--tw-text-opacity:1;color:rgb(225 29 72 / var(--tw-text-opacity, 1))}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.last\:border-b-0:last-child{border-bottom-width:0px}.hover\:bg-blue-700:hover{--tw-bg-opacity:1;background-color:rgb(29 78 216 / var(--tw-bg-opacity, 1))}.hover\:from-rose-600:hover{--tw-gradient-from:#e11d48 var(--tw-gradient-from-position);--tw-gradient-to:rgb(225 29 72 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.hover\:to-pink-700:hover{--tw-gradient-to:#be185d var(--tw-gradient-to-position)}.hover\:text-red-800:hover{--tw-text-opacity:1;color:rgb(153 27 27 / var(--tw-text-opacity, 1))}.hover\:text-red-700:hover{--tw-text-opacity:1;color:rgb(185 28 28 / var(--tw-text-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-blue-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(59 130 246 / var(--tw-ring-opacity, 1))}.disabled\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\:opacity-50:disabled{opacity:0.5}@media (min-width: 1024px){.lg\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}}</style></head>
+<body>
+    <div class="min-h-screen flex flex-col">
+        <header class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-6 shadow-lg">
+            <div class="container mx-auto px-4">
+                <h1 class="text-3xl font-bold text-center">生活科技徐老師抽籤輪盤遊戲</h1>
+            </div>
+        </header>
+        
+        <main class="flex-grow container mx-auto px-4 py-8">
+            <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- 左側：選項管理 -->
+                    <div class="bg-blue-50 p-6 rounded-lg">
+                        <h2 class="text-xl font-bold mb-4 text-blue-800">選項管理</h2>
+                        
+                        <div class="mb-4">
+                            <label for="optionInput" class="block text-sm font-medium text-gray-700 mb-1">新增選項</label>
+                            <div class="flex">
+                                <input type="text" id="optionInput" class="flex-grow px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="請輸入選項">
+                                <button id="addOption" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-r-lg transition-colors">新增</button>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="flex items-center mb-2">
+                                <h3 class="text-lg font-medium text-gray-700">選項列表</h3>
+                                <span id="optionsCount" class="ml-2 text-sm text-gray-500">(0)</span>
+                                <button id="clearOptions" class="ml-auto text-sm text-red-600 hover:text-red-800">清空所有</button>
+                            </div>
+                            <div id="optionsList" class="bg-white border border-gray-200 rounded-lg max-h-64 overflow-y-auto"><div class="p-4 text-gray-500 text-center">尚未新增選項</div></div>
+                        </div>
+                        
+                        <div class="flex justify-center">
+                            <button id="spinButton" class="spin-button bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white font-bold py-3 px-8 rounded-full shadow-lg disabled:opacity-50 disabled:cursor-not-allowed" disabled="">開始抽籤</button>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <h3 class="text-lg font-medium text-gray-700 mb-2">抽籤歷史</h3>
+                            <div id="historyList" class="bg-white border border-gray-200 rounded-lg max-h-40 overflow-y-auto p-2"><div class="p-2 text-gray-500 text-center">尚無抽籤記錄</div></div>
+                        </div>
+                    </div>
+                    
+                    <!-- 右側：輪盤與結果 -->
+                    <div class="flex flex-col items-center justify-center">
+                        <div class="wheel-container mb-6">
+                            <div class="wheel-pointer"></div>
+                            <div id="wheel" class="wheel bg-gray-200 flex items-center justify-center" style="transform: rotate(3780deg); transition: transform 3s cubic-bezier(0.17, 0.67, 0.12, 0.99);"><div class="text-gray-500 text-center p-4">請先新增選項</div></div>
+                            <div class="wheel-center"></div>
+                            <div id="confettiContainer" class="confetti-container"></div>
+                        </div>
+                        
+                        <div class="w-full">
+                            <h3 class="text-lg font-medium text-gray-700 mb-2 text-center">抽籤結果</h3>
+                            <div id="resultDisplay" class="result-display bg-gradient-to-r from-yellow-50 to-amber-50 border border-amber-200 rounded-lg p-4 text-center"><p class="text-gray-500">等待抽籤...</p></div>
+                            <div id="nextActionInfo" class="mt-2 text-center text-sm text-gray-500 hidden">
+                                下次抽籤時將移除已抽中的選項
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="bg-gray-800 text-white py-4 text-center text-sm">
+            <p>© 2023 生活科技徐老師抽籤輪盤遊戲 - 使用 Canva Code 製作</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const optionInput = document.getElementById('optionInput');
+            const addOptionBtn = document.getElementById('addOption');
+            const optionsList = document.getElementById('optionsList');
+            const optionsCount = document.getElementById('optionsCount');
+            const clearOptionsBtn = document.getElementById('clearOptions');
+            const spinButton = document.getElementById('spinButton');
+            const wheel = document.getElementById('wheel');
+            const resultDisplay = document.getElementById('resultDisplay');
+            const confettiContainer = document.getElementById('confettiContainer');
+            const historyList = document.getElementById('historyList');
+            const nextActionInfo = document.getElementById('nextActionInfo');
+            
+            let options = [];
+            let isSpinning = false;
+            let currentRotation = 0;
+            let lastSelectedOption = null; // 上次抽中的選項
+            let drawHistory = []; // 抽籤歷史
+            let toBeRemoved = false; // 是否有選項將被移除
+            
+            const ROTATION_CIRCLES = 10; // 固定旋轉10圈
+            const SPIN_DURATION = 3000; // 旋轉持續時間（3秒）
+            
+            // 新增選項
+            function addOption() {
+                const option = optionInput.value.trim();
+                if (option) {
+                    options.push(option);
+                    optionInput.value = '';
+                    updateOptionsList();
+                    updateWheel();
+                    spinButton.disabled = false;
+                }
+            }
+            
+            // 更新選項列表
+            function updateOptionsList() {
+                optionsCount.textContent = `(${options.length})`;
+                
+                if (options.length === 0) {
+                    optionsList.innerHTML = '<div class="p-4 text-gray-500 text-center">尚未新增選項</div>';
+                    return;
+                }
+                
+                optionsList.innerHTML = '';
+                options.forEach((option, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'option-item flex items-center justify-between p-3 border-b border-gray-200 last:border-b-0';
+                    
+                    // 如果是上次抽中的選項，添加標記
+                    if (option === lastSelectedOption) {
+                        item.classList.add('to-be-removed');
+                    }
+                    
+                    let statusBadge = '';
+                    if (option === lastSelectedOption) {
+                        statusBadge = '<span class="status-badge bg-red-100 text-red-800">將被移除</span>';
+                    }
+                    
+                    item.innerHTML = `
+                        <span class="text-gray-800">${option}${statusBadge}</span>
+                        <button class="delete-option text-red-500 hover:text-red-700" data-index="${index}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    `;
+                    optionsList.appendChild(item);
+                });
+                
+                // 添加刪除選項的事件監聽
+                document.querySelectorAll('.delete-option').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        const deletedOption = options[index];
+                        
+                        // 如果刪除的是上次抽中的選項，重置lastSelectedOption
+                        if (deletedOption === lastSelectedOption) {
+                            // 檢查是否還有其他相同的選項
+                            const remainingCount = options.filter(opt => opt === lastSelectedOption).length;
+                            if (remainingCount <= 1) {
+                                lastSelectedOption = null;
+                                toBeRemoved = false;
+                                nextActionInfo.classList.add('hidden');
+                            }
+                        }
+                        
+                        options.splice(index, 1);
+                        updateOptionsList();
+                        updateWheel();
+                        spinButton.disabled = options.length === 0;
+                    });
+                });
+            }
+            
+            // 更新輪盤
+            function updateWheel() {
+                if (options.length === 0) {
+                    wheel.innerHTML = '<div class="text-gray-500 text-center p-4">請先新增選項</div>';
+                    return;
+                }
+                
+                wheel.innerHTML = '';
+                
+                // 創建SVG元素
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('width', '100%');
+                svg.setAttribute('height', '100%');
+                svg.setAttribute('viewBox', '0 0 300 300');
+                
+                const centerX = 150;
+                const centerY = 150;
+                const radius = 145;
+                const segmentAngle = 360 / options.length;
+                
+                // 創建扇形和文字
+                options.forEach((option, index) => {
+                    // 計算扇形的起始和結束角度
+                    const startAngle = index * segmentAngle;
+                    const endAngle = (index + 1) * segmentAngle;
+                    
+                    // 創建扇形路徑
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    
+                    // 計算扇形的路徑
+                    const startRad = (startAngle - 90) * Math.PI / 180;
+                    const endRad = (endAngle - 90) * Math.PI / 180;
+                    
+                    const x1 = centerX + radius * Math.cos(startRad);
+                    const y1 = centerY + radius * Math.sin(startRad);
+                    const x2 = centerX + radius * Math.cos(endRad);
+                    const y2 = centerY + radius * Math.sin(endRad);
+                    
+                    const largeArcFlag = endAngle - startAngle <= 180 ? 0 : 1;
+                    
+                    const d = [
+                        `M ${centerX},${centerY}`,
+                        `L ${x1},${y1}`,
+                        `A ${radius},${radius} 0 ${largeArcFlag},1 ${x2},${y2}`,
+                        'Z'
+                    ].join(' ');
+                    
+                    path.setAttribute('d', d);
+                    
+                    // 如果是上次抽中的選項，使用特殊顏色
+                    if (option === lastSelectedOption) {
+                        path.setAttribute('fill', '#fcd34d'); // 金黃色
+                        path.setAttribute('stroke', '#f59e0b');
+                        path.setAttribute('stroke-width', '2');
+                    } else {
+                        path.setAttribute('fill', getColor(index, options.length));
+                        path.setAttribute('stroke', '#ffffff');
+                        path.setAttribute('stroke-width', '1');
+                    }
+                    
+                    svg.appendChild(path);
+                    
+                    // 添加文字
+                    const textAngle = startAngle + segmentAngle / 2;
+                    const textRad = (textAngle - 90) * Math.PI / 180;
+                    const textDistance = radius * 0.65; // 文字距離中心的距離
+                    
+                    const textX = centerX + textDistance * Math.cos(textRad);
+                    const textY = centerY + textDistance * Math.sin(textRad);
+                    
+                    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    text.setAttribute('x', textX);
+                    text.setAttribute('y', textY);
+                    text.setAttribute('text-anchor', 'middle');
+                    text.setAttribute('dominant-baseline', 'middle');
+                    text.setAttribute('fill', option === lastSelectedOption ? '#7c2d12' : '#ffffff');
+                    text.setAttribute('font-size', '14');
+                    text.setAttribute('font-weight', 'bold');
+                    text.setAttribute('transform', `rotate(${textAngle}, ${textX}, ${textY})`);
+                    
+                    // 處理文字長度
+                    let displayText = option;
+                    if (option.length > 8) {
+                        displayText = option.substring(0, 7) + '...';
+                    }
+                    
+                    text.textContent = displayText;
+                    text.setAttribute('title', option);
+                    
+                    svg.appendChild(text);
+                });
+                
+                wheel.appendChild(svg);
+            }
+            
+            // 獲取顏色
+            function getColor(index, total) {
+                const colors = [
+                    '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6',
+                    '#ec4899', '#06b6d4', '#f97316', '#14b8a6', '#6366f1'
+                ];
+                
+                return colors[index % colors.length];
+            }
+            
+            // 旋轉輪盤
+            function spinWheel() {
+                if (isSpinning || options.length === 0) return;
+                
+                // 如果有上次抽中的選項，先移除它（包括所有重複的）
+                if (lastSelectedOption !== null) {
+                    // 計算要移除的選項數量
+                    const beforeCount = options.length;
+                    options = options.filter(option => option !== lastSelectedOption);
+                    const afterCount = options.length;
+                    const removedCount = beforeCount - afterCount;
+                    
+                    // 顯示移除信息
+                    if (removedCount > 0) {
+                        const message = `已移除 ${removedCount} 個「${lastSelectedOption}」選項`;
+                        showTemporaryMessage(message);
+                    }
+                    
+                    // 重置狀態
+                    lastSelectedOption = null;
+                    toBeRemoved = false;
+                    nextActionInfo.classList.add('hidden');
+                    
+                    // 如果沒有選項了，更新UI並返回
+                    if (options.length === 0) {
+                        updateOptionsList();
+                        updateWheel();
+                        spinButton.disabled = true;
+                        resultDisplay.innerHTML = '<p class="text-gray-500">所有選項已抽完</p>';
+                        return;
+                    }
+                    
+                    // 更新UI
+                    updateOptionsList();
+                    updateWheel();
+                }
+                
+                isSpinning = true;
+                spinButton.disabled = true;
+                resultDisplay.innerHTML = '<p class="text-gray-500">抽籤中...</p>';
+                
+                // 先重置輪盤位置，使其平滑過渡
+                wheel.classList.add('wheel-reset');
+                wheel.style.transform = 'rotate(0deg)';
+                currentRotation = 0;
+                
+                // 短暫延遲後開始旋轉，確保重置動畫完成
+                setTimeout(() => {
+                    wheel.classList.remove('wheel-reset');
+                    
+                    // 決定旋轉角度
+                    const segmentAngle = 360 / options.length;
+                    const randomIndex = Math.floor(Math.random() * options.length);
+                    
+                    // 計算旋轉角度，使指針指向選中的選項中心
+                    const targetAngle = 360 - (randomIndex * segmentAngle + segmentAngle / 2); // 指向選中選項的中心
+                    const targetRotation = 360 * ROTATION_CIRCLES + targetAngle;
+                    
+                    // 設置旋轉動畫
+                    wheel.style.transition = `transform ${SPIN_DURATION / 1000}s cubic-bezier(0.17, 0.67, 0.12, 0.99)`;
+                    currentRotation = targetRotation;
+                    wheel.style.transform = `rotate(${currentRotation}deg)`;
+                    
+                    // 旋轉結束後顯示結果
+                    setTimeout(() => {
+                        const selectedOption = options[randomIndex];
+                        lastSelectedOption = selectedOption; // 記錄本次抽中的選項
+                        toBeRemoved = true;
+                        
+                        showResult(selectedOption);
+                        addToHistory(selectedOption);
+                        
+                        // 更新選項列表，標記將被移除的選項
+                        updateOptionsList();
+                        
+                        // 顯示下次操作提示
+                        nextActionInfo.classList.remove('hidden');
+                        
+                        isSpinning = false;
+                        spinButton.disabled = false;
+                        spinButton.textContent = '再次抽籤';
+                    }, SPIN_DURATION + 100); // 加100ms確保動畫完成
+                }, 50);
+            }
+            
+            // 顯示臨時消息
+            function showTemporaryMessage(message) {
+                const messageElement = document.createElement('div');
+                messageElement.className = 'fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded shadow-lg z-50';
+                messageElement.textContent = message;
+                document.body.appendChild(messageElement);
+                
+                setTimeout(() => {
+                    messageElement.classList.add('fade-out');
+                    setTimeout(() => {
+                        messageElement.remove();
+                    }, 500);
+                }, 2000);
+            }
+            
+            // 顯示結果
+            function showResult(result) {
+                resultDisplay.innerHTML = `
+                    <p class="text-xl font-bold text-blue-800">恭喜抽中：</p>
+                    <p class="text-2xl font-bold text-rose-600 mt-2">${result}</p>
+                    <p class="text-sm text-gray-500 mt-2">下次抽籤時將移除所有「${result}」選項</p>
+                `;
+                
+                // 添加慶祝效果
+                createConfetti();
+            }
+            
+            // 添加到歷史記錄
+            function addToHistory(option) {
+                // 添加到歷史記錄
+                const now = new Date();
+                const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+                
+                drawHistory.unshift({
+                    option: option,
+                    time: timeString
+                });
+                
+                // 最多保留10條記錄
+                if (drawHistory.length > 10) {
+                    drawHistory.pop();
+                }
+                
+                updateHistoryList();
+            }
+            
+            // 更新歷史記錄列表
+            function updateHistoryList() {
+                if (drawHistory.length === 0) {
+                    historyList.innerHTML = '<div class="p-2 text-gray-500 text-center">尚無抽籤記錄</div>';
+                    return;
+                }
+                
+                historyList.innerHTML = '';
+                drawHistory.forEach((record, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'history-item p-2 border-b border-gray-100 last:border-b-0 flex justify-between items-center';
+                    if (index === 0) {
+                        item.classList.add('bg-yellow-50');
+                    }
+                    
+                    item.innerHTML = `
+                        <span class="text-gray-800">${record.option}</span>
+                        <span class="text-gray-500 text-xs">${record.time}</span>
+                    `;
+                    
+                    historyList.appendChild(item);
+                });
+            }
+            
+            // 創建慶祝效果
+            function createConfetti() {
+                confettiContainer.innerHTML = '';
+                const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+                
+                for (let i = 0; i < 50; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    
+                    // 隨機位置，但限制在輪盤範圍內
+                    const angle = Math.random() * 360;
+                    const distance = Math.random() * 120 + 30; // 距離中心30-150px
+                    
+                    const x = 150 + distance * Math.cos(angle * Math.PI / 180);
+                    const y = 150 + distance * Math.sin(angle * Math.PI / 180);
+                    
+                    confetti.style.left = `${x}px`;
+                    confetti.style.top = `${y}px`;
+                    
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.width = `${Math.random() * 10 + 5}px`;
+                    confetti.style.height = confetti.style.width;
+                    confetti.style.animationDelay = `${Math.random() * 1}s`;
+                    
+                    confettiContainer.appendChild(confetti);
+                }
+                
+                // 動畫結束後清空
+                setTimeout(() => {
+                    confettiContainer.innerHTML = '';
+                }, 3000);
+            }
+            
+            // 事件監聽
+            addOptionBtn.addEventListener('click', addOption);
+            
+            optionInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addOption();
+                }
+            });
+            
+            clearOptionsBtn.addEventListener('click', function() {
+                options = [];
+                lastSelectedOption = null;
+                toBeRemoved = false;
+                drawHistory = [];
+                updateOptionsList();
+                updateWheel();
+                updateHistoryList();
+                spinButton.disabled = true;
+                spinButton.textContent = '開始抽籤';
+                resultDisplay.innerHTML = '<p class="text-gray-500">等待抽籤...</p>';
+                nextActionInfo.classList.add('hidden');
+            });
+            
+            spinButton.addEventListener('click', spinWheel);
+            
+            // 初始化
+            spinButton.disabled = true;
+            updateOptionsList();
+            updateWheel();
+            updateHistoryList();
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'944c1065d5ed8439',t:'MTc0ODA4MjA2NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><iframe height="1" width="1" style="position: absolute; top: 0px; left: 0px; border: none; visibility: hidden;" src="./saved_resource.html"></iframe>
+</body></html>
